@@ -1,4 +1,4 @@
-# FFMPEG
+# Easy FFMPEG 60FPS
 
 Projeto inerface de facil para a operação 
 ffmpeg set framerate 60 fps 
