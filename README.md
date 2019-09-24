@@ -1,7 +1,9 @@
 # Easy FFMPEG 60FPS
 
-Projeto inerface de facil para a operação 
+Projeto: interface de facil para a operação:
+
 ffmpeg set framerate 60 fps 
+
 
 Necessário:
 ter no computador o ffmpeg e informar ao programa o local do aquivo ffmpeg.exe (Ao informar uma vez o local é salvo em XML e lido automaticamente ao iniciar)
