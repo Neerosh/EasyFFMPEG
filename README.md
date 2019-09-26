@@ -1,6 +1,7 @@
 # Easy FFMPEG 60FPS
 
-Projeto: interface de facil uso para converter videos suportados a 60 fps.
+<p>Projeto: interface de facil uso para converter videos suportados.</p>
+<p>Aprendendo e testando funcionalidades do github.</p>
 
 Necessário:
 - JRE 1.8 ou JDK 13
