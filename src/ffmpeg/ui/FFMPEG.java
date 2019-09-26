@@ -6,7 +6,6 @@
 package ffmpeg.ui;
 
 import java.awt.Color;
-import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 

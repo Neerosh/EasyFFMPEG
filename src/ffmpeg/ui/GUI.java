@@ -10,12 +10,20 @@ import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.NumberFormat;
+import java.util.Formatter;
+import java.util.Locale;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
+import javax.swing.JFormattedTextField.AbstractFormatterFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -39,7 +47,7 @@ public class GUI extends JFrame {
 
     XML xml = new XML();
     static JTextArea output = new JTextArea();
-    static JLabel status= new JLabel("Não iniciado");
+    static JLabel status = new JLabel("Não iniciado");
 
     private static void ClearLists(DefaultListModel d1) {
         d1.clear();
@@ -63,7 +71,7 @@ public class GUI extends JFrame {
         JPanel panel = new JPanel();
         JList inputList = new JList(dlmInput);
         JScrollPane inputScroll = new JScrollPane(inputList, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        JScrollPane outputScroll = new JScrollPane(output, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane outputScroll = new JScrollPane(output, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         //Borda
         inputScroll.setBorder(BorderFactory.createTitledBorder(null, "Arquivos Selecionados:", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Helvetica", Font.PLAIN, 12)));
@@ -73,14 +81,30 @@ public class GUI extends JFrame {
         status.setHorizontalAlignment(JLabel.CENTER);
         status.setVerticalAlignment(JLabel.CENTER);
         status.setForeground(Color.BLUE);
-        
+
         //auto scroll (puxa para o texto mais recente)
         DefaultCaret caret = (DefaultCaret) output.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
+        //format
+        NumberFormat nf = NumberFormat.getIntegerInstance();
+        nf.setGroupingUsed(false);
+        //Valores
+        String[] miModeList = {"mci", "blend", "dub"};
+        String[] mcModeList = {"obmc", "aobmc"};
+        String[] meModeList = {"bidir","bilat"};
+
         JLabel labelInput = new JLabel("Arquivo de Entrada: ");
         JLabel labelOutput = new JLabel("Arquivo de Saida: ");
         JLabel labelFfmpeg = new JLabel("Pasta do FFMPEG :");
+        JLabel labelFps = new JLabel("Frames por Segundo :");
+        JLabel labelMiMode = new JLabel("Mi_Mode :");
+        JLabel labelMcMode = new JLabel("Mc_Mode :");
+        JLabel labelMeMode = new JLabel("Me_Mode :");
+        JFormattedTextField fps = new JFormattedTextField(nf);
+        JComboBox miMode = new JComboBox(miModeList);
+        JComboBox mcMode = new JComboBox(mcModeList);
+        JComboBox meMode = new JComboBox(meModeList);
         JTextField localInput = new JTextField();
         JTextField localOutput = new JTextField();
         JTextField localFfmpeg = new JTextField();
@@ -93,10 +117,24 @@ public class GUI extends JFrame {
         //Verifica XML
         localFfmpeg.setText(xml.SearchXML("FFMPEG"));
 
-        //Tamanhos
+        //valores iniciais / configuração de campos
+        miMode.setSelectedIndex(0);
+        mcMode.setSelectedIndex(1);
+        meMode.setSelectedIndex(0);
+        fps.setText("60");
+
+        //Tamanhos fontes
         labelInput.setFont(new Font("Helvetica", Font.PLAIN, 12));
         labelOutput.setFont(new Font("Helvetica", Font.PLAIN, 12));
         labelFfmpeg.setFont(new Font("Helvetica", Font.PLAIN, 12));
+        labelFps.setFont(new Font("Helvetica", Font.PLAIN, 12));
+        labelMiMode.setFont(new Font("Helvetica", Font.PLAIN, 12));
+        labelMcMode.setFont(new Font("Helvetica", Font.PLAIN, 12));
+        labelMeMode.setFont(new Font("Helvetica", Font.PLAIN, 12));
+        fps.setFont(new Font("Helvetica", Font.PLAIN, 12));
+        miMode.setFont(new Font("Helvetica", Font.PLAIN, 12));
+        mcMode.setFont(new Font("Helvetica", Font.PLAIN, 12));
+        meMode.setFont(new Font("Helvetica", Font.PLAIN, 12));
         localInput.setFont(new Font("Helvetica", Font.PLAIN, 12));
         localOutput.setFont(new Font("Helvetica", Font.PLAIN, 12));
         localFfmpeg.setFont(new Font("Helvetica", Font.PLAIN, 12));
@@ -109,20 +147,36 @@ public class GUI extends JFrame {
         remove.setFont(new Font("Helvetica", Font.PLAIN, 12));
         pr.setFont(new Font("Helvetica", Font.PLAIN, 12));
 
-        labelInput.setSize(120, 20);
-        labelOutput.setSize(120, 20);
+        
+        //Tamanhos frame
         labelFfmpeg.setSize(120, 20);
-        localInput.setSize(400, 25);
-        localOutput.setSize(400, 25);
-        localFfmpeg.setSize(400, 25);
-        searchInput.setSize(150, 30);
+        localFfmpeg.setSize(480, 25);
         searchFfmpeg.setSize(150, 30);
+        
+        labelFps.setSize(130, 20);
+        fps.setSize(50, 25);
+        labelMiMode.setSize(60, 20);
+        miMode.setSize(60, 25);
+        labelMcMode.setSize(60, 20);
+        mcMode.setSize(70, 25);
+        labelMeMode.setSize(60,20);
+        meMode.setSize(60,25);
+
+        labelInput.setSize(120, 20);
+        localInput.setSize(480, 25);
+        searchInput.setSize(150, 30);
+        
+        labelOutput.setSize(120, 20);
+        localOutput.setSize(480, 25);
+
+        pr.setSize(600, 30);
         start.setSize(150, 30);
         status.setSize(150, 30);
+
+        inputScroll.setSize(600, 140);
         remove.setSize(160, 30);
-        pr.setSize(520, 30);
-        inputScroll.setSize(520, 140);
         outputScroll.setSize(750, 140);
+        
         panel.setSize(900, 500);
 
         //Opções Painel
@@ -131,49 +185,84 @@ public class GUI extends JFrame {
         //Adição ao Painel
         inputScroll.getViewport().add(inputList);
         outputScroll.getViewport().add(output);
-
-        panel.add(labelInput);
-        panel.add(labelOutput);
+        
         panel.add(labelFfmpeg);
-        panel.add(localInput);
-        panel.add(localOutput);
         panel.add(localFfmpeg);
-        panel.add(status);
-        panel.add(searchInput);
         panel.add(searchFfmpeg);
-        panel.add(start);
-        panel.add(remove);
+        panel.add(labelFps);
+        panel.add(fps);
+        panel.add(labelMiMode);
+        panel.add(miMode);
+        panel.add(labelMcMode);
+        panel.add(mcMode);
+        panel.add(labelMeMode);
+        panel.add(meMode);
+        panel.add(labelInput);
+        panel.add(localInput);
+        panel.add(searchInput);
+        panel.add(labelOutput);
+        panel.add(localOutput);
         panel.add(pr);
+        panel.add(start);
+        panel.add(status);
         panel.add(inputScroll);
+        panel.add(remove);
         panel.add(outputScroll);
+        
+        
 
-        //Local no painel
-        labelFfmpeg.setLocation(30, 25);
-        labelInput.setLocation(30, 75);
-        labelOutput.setLocation(30, 115);
-        localFfmpeg.setLocation(150, 25);
-        localInput.setLocation(150, 75);
-        localOutput.setLocation(150, 115);
-        pr.setLocation(30, 150);
-        searchFfmpeg.setLocation(560, 22);
-        searchInput.setLocation(560, 72);
-        start.setLocation(560, 150);
-        status.setLocation(560, 180);
-        remove.setLocation(560, 300);
+        //Local no painel (ordem cima para baixo)
+        labelFfmpeg.setLocation(30, 20);
+        localFfmpeg.setLocation(150, 20);
+        searchFfmpeg.setLocation(670, 17);
+        
+        labelFps.setLocation(15, 60);
+        fps.setLocation(150, 60);
+        labelMiMode.setLocation(210, 60);
+        miMode.setLocation(270, 60);
+        labelMcMode.setLocation(350, 60);
+        mcMode.setLocation(413, 60);
+        labelMeMode.setLocation(500,60);
+        meMode.setLocation(563, 60);
+        
+        labelInput.setLocation(30, 140);
+        localInput.setLocation(150, 140);
+        searchInput.setLocation(670, 137);
+        
+        labelOutput.setLocation(30, 180);
+        localOutput.setLocation(150, 180);
+
+        pr.setLocation(30, 215);
+        start.setLocation(670, 213);
+        status.setLocation(670, 240);
+
         inputList.setLocation(1, 1);
-
-        inputScroll.setLocation(30, 200);
-        outputScroll.setLocation(30, 350);
+        inputScroll.setLocation(30, 250);
+        remove.setLocation(665, 350);
+        
+        outputScroll.setLocation(30, 400);
+        
         frame.add(panel);
 
         //Opções do Frame
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
-        frame.setSize(850, 550);
+        frame.setSize(850, 600);
         frame.setTitle("Teste Filtro Minterpolate FFMPEG");
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+
+        miMode.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (miMode.getSelectedItem().toString().equals("mci")) {
+                    mcMode.setEnabled(true);
+                } else {
+                    mcMode.setEnabled(false);
+                }
+            }
+        });
 
         //Ações dos Botões
         searchInput.addActionListener(new ActionListener() {
@@ -184,6 +273,13 @@ public class GUI extends JFrame {
                 fileDialog.setVisible(true);
 
                 if (fileDialog.getFile() != null) {
+                    if (fileDialog.getFiles().length <=1 ) {
+                        localInput.setText(fileDialog.getDirectory()+fileDialog.getFile());
+                        localOutput.setText(fileDialog.getDirectory() + "Out_" + fileDialog.getFile());
+                    } else {
+                        localInput.setText("Multiplos Arquivos");
+                        localOutput.setText("Multiplos Arquivos");
+                    }
                     ClearLists(dlmInput);
                     ClearLists(dlmOutput);
                     for (int a = 0; a < fileDialog.getFiles().length; a++) {
@@ -193,7 +289,6 @@ public class GUI extends JFrame {
                         } else {
                             dlmOutput.addElement(fileDialog.getDirectory() + "Out_" + fileDialog.getFiles()[a].getName());
                         }
-
                     }
                 }
 
@@ -217,20 +312,19 @@ public class GUI extends JFrame {
                 }
             }
         });
-        
-        
+
         status.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-               if ("text".equals(evt.getPropertyName())&& evt.getNewValue().equals("Concluido")) {
+                if ("text".equals(evt.getPropertyName()) && evt.getNewValue().equals("Concluido")) {
                     searchInput.setEnabled(true);
                     searchFfmpeg.setEnabled(true);
                     start.setEnabled(true);
                     remove.setEnabled(true);
-                    
+
                     ClearLists(dlmInput);
                     ClearLists(dlmOutput);
-               }
+                }
             }
         });
 
@@ -242,7 +336,7 @@ public class GUI extends JFrame {
                 status.setForeground(Color.RED);
                 pr.setMaximum(dlmInput.getSize());
                 pr.setValue(0);
-                pr.setString(0+" de "+dlmInput.getSize());
+                pr.setString(0 + " de " + dlmInput.getSize());
                 pr.setStringPainted(true);
                 //progressWorker.execute();
                 String input = "", output = "";
@@ -250,7 +344,12 @@ public class GUI extends JFrame {
                 //formação do comando ffmpeg
                 for (int a = 0; a < dlmInput.getSize(); a++) {
                     input = " -i \"" + dlmInput.getElementAt(a) + "\" ";
-                    output = "-filter:v \"minterpolate=fps=60:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1\" -codec:v libx264 -crf 18 -preset slow -threads 1 -c:a copy \"" + dlmOutput.getElementAt(a) + "\" ";
+                    output = "-filter:v \"minterpolate=fps=" + fps.getText() + ":mi_mode=" + miMode.getSelectedItem();
+                    if (miMode.getSelectedItem().toString().equals("mci") && mcMode.getSelectedItem() != "") {
+                        output = output + ":mc_mode=" + mcMode.getSelectedItem();
+                    }
+                    output = output + ":me_mode="+meMode.getSelectedItem()+":vsbmc=1\" -codec:v libx264 -crf 18 -preset slow -threads 1 -c:a copy \"" + dlmOutput.getElementAt(a) + "\" ";
+
                     listacomando[a] = intro + "" + input + "" + output;
                 }
                 //execução do comando
@@ -271,7 +370,6 @@ public class GUI extends JFrame {
                 searchFfmpeg.setEnabled(false);
                 start.setEnabled(false);
                 remove.setEnabled(false);
-
 
             }
         }
