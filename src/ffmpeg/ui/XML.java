@@ -7,16 +7,18 @@ package ffmpeg.ui;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.Enumeration;
 import java.util.Properties;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Nerrosh
  */
 public class XML {
-    
+
     protected void WriteXml(String Name, String Value) {
         try {
             Properties properties = new Properties();
@@ -49,6 +51,9 @@ public class XML {
                 }
 
             }
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(null, "- Favor especificar o caminho do executavel ffmpeg.exe.\n- Exemplo :\n PastaDoPrograma\\ffmpeg\\bin\\ffmpeg.exe",
+                     "Arquivo de Configurações Não Encontrado", JOptionPane.WARNING_MESSAGE);
         } catch (Exception e) {
             System.out.println(e);
         }
