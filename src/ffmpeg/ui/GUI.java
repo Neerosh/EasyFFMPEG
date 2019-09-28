@@ -93,6 +93,7 @@ public class GUI extends JFrame {
         NumberFormat nf2 = NumberFormat.getNumberInstance();
         //nf2.setGroupingUsed(false);
         //Valores
+        String[] presetList = {"ultrafast", "superfast", "veryfast", "faster", "fast", "medium", "slow", "slower", "veryslow"};
         String[] miModeList = {"mci", "blend", "dub"};
         String[] mcModeList = {"obmc", "aobmc"};
         String[] meModeList = {"bidir", "bilat"};
@@ -103,16 +104,20 @@ public class GUI extends JFrame {
         JLabel labelInput = new JLabel("Arquivo de Entrada :");
         JLabel labelOutput = new JLabel("Arquivo de Saida :");
         JLabel labelFfmpeg = new JLabel("Pasta do FFMPEG :");
-        JLabel labelFps = new JLabel("Frames por Segundo :");
+        JLabel labelFps = new JLabel("FPS :");
+        JLabel labelPreset = new JLabel("Preset :");
         JLabel labelMiMode = new JLabel("MI Mode :");
         JLabel labelMcMode = new JLabel("MC Mode :");
         JLabel labelMeMode = new JLabel("ME Mode :");
+        JLabel labelCrf = new JLabel("CRF :");
         JLabel labelVsbmc = new JLabel("VSBMC :");
         JLabel labelMe = new JLabel("ME :");
         JLabel labelScd = new JLabel("SCD :");
         JLabel labelScd_threshold = new JLabel("SCD threshold :");
         JFormattedTextField fps = new JFormattedTextField(nfInteger);
+        JFormattedTextField crf = new JFormattedTextField(nfInteger);
         JFormattedTextField scd_threshold = new JFormattedTextField(nf2);
+        JComboBox preset = new JComboBox(presetList);
         JComboBox miMode = new JComboBox(miModeList);
         JComboBox mcMode = new JComboBox(mcModeList);
         JComboBox meMode = new JComboBox(meModeList);
@@ -133,12 +138,14 @@ public class GUI extends JFrame {
         localFfmpeg.setText(xml.SearchXML("FFMPEG"));
 
         //valores iniciais / configuração de campos
+        preset.setSelectedIndex(6);
         miMode.setSelectedIndex(0);
         mcMode.setSelectedIndex(1);
         meMode.setSelectedIndex(0);
         vsbmc.setSelectedIndex(0);
         me.setSelectedIndex(7);
         fps.setText("60");
+        crf.setText("18");
         scd.setSelectedIndex(1);
         scd_threshold.setText("5.0");
 
@@ -147,18 +154,22 @@ public class GUI extends JFrame {
         labelOutput.setFont(new Font("Helvetica", Font.PLAIN, 12));
         labelFfmpeg.setFont(new Font("Helvetica", Font.PLAIN, 12));
         labelFps.setFont(new Font("Helvetica", Font.PLAIN, 12));
+        labelPreset.setFont(new Font("Helvetica", Font.PLAIN, 12));
         labelMiMode.setFont(new Font("Helvetica", Font.PLAIN, 12));
         labelMcMode.setFont(new Font("Helvetica", Font.PLAIN, 12));
         labelMeMode.setFont(new Font("Helvetica", Font.PLAIN, 12));
+        labelCrf.setFont(new Font("Helvetica", Font.PLAIN, 12));
         labelVsbmc.setFont(new Font("Helvetica", Font.PLAIN, 12));
         labelMe.setFont(new Font("Helvetica", Font.PLAIN, 12));
         labelScd.setFont(new Font("Helvetica", Font.PLAIN, 12));
         labelScd_threshold.setFont(new Font("Helvetica", Font.PLAIN, 12));
+        preset.setFont(new Font("Helvetica", Font.PLAIN, 12));
         fps.setFont(new Font("Helvetica", Font.PLAIN, 12));
         scd_threshold.setFont(new Font("Helvetica", Font.PLAIN, 12));
         miMode.setFont(new Font("Helvetica", Font.PLAIN, 12));
         mcMode.setFont(new Font("Helvetica", Font.PLAIN, 12));
         meMode.setFont(new Font("Helvetica", Font.PLAIN, 12));
+        crf.setFont(new Font("Helvetica", Font.PLAIN, 12));
         vsbmc.setFont(new Font("Helvetica", Font.PLAIN, 12));
         me.setFont(new Font("Helvetica", Font.PLAIN, 12));
         scd.setFont(new Font("Helvetica", Font.PLAIN, 12));
@@ -180,13 +191,17 @@ public class GUI extends JFrame {
         searchFfmpeg.setSize(150, 30);
 
         labelFps.setSize(130, 20);
-        fps.setSize(50, 25);
+        fps.setSize(30, 20);
+        labelPreset.setSize(130, 20);
+        preset.setSize(80, 20);
         labelMiMode.setSize(60, 20);
-        miMode.setSize(60, 25);
+        miMode.setSize(60, 20);
         labelMcMode.setSize(60, 20);
-        mcMode.setSize(70, 25);
+        mcMode.setSize(70, 20);
         labelMeMode.setSize(60, 20);
-        meMode.setSize(60, 25);
+        meMode.setSize(60, 20);
+        labelCrf.setSize(60, 20);
+        crf.setSize(30, 20);
         labelVsbmc.setSize(60, 20);
         vsbmc.setSize(100, 20);
         labelMe.setSize(60, 20);
@@ -194,7 +209,7 @@ public class GUI extends JFrame {
         labelScd.setSize(60, 20);
         scd.setSize(100, 20);
         labelScd_threshold.setSize(90, 20);
-        scd_threshold.setSize(40, 25);
+        scd_threshold.setSize(30, 20);
 
         labelInput.setSize(120, 20);
         localInput.setSize(480, 25);
@@ -209,10 +224,10 @@ public class GUI extends JFrame {
 
         inputScroll.setSize(600, 140);
         remove.setSize(160, 30);
-        outputScroll.setSize(750, 140);
+        outputScroll.setSize(790, 150);
 
         panel.setSize(850, 650);
-        optionsFfmpeg.setSize(620, 110);
+        optionsFfmpeg.setSize(630, 110);
         //Opções Painel
         panel.setLayout(null);
         optionsFfmpeg.setLayout(null);
@@ -222,12 +237,16 @@ public class GUI extends JFrame {
         outputScroll.getViewport().add(output);
         optionsFfmpeg.add(labelFps);
         optionsFfmpeg.add(fps);
+        optionsFfmpeg.add(labelPreset);
+        optionsFfmpeg.add(preset);
         optionsFfmpeg.add(labelMiMode);
         optionsFfmpeg.add(miMode);
         optionsFfmpeg.add(labelMcMode);
         optionsFfmpeg.add(mcMode);
         optionsFfmpeg.add(labelMeMode);
         optionsFfmpeg.add(meMode);
+        optionsFfmpeg.add(labelCrf);
+        optionsFfmpeg.add(crf);
         optionsFfmpeg.add(labelVsbmc);
         optionsFfmpeg.add(vsbmc);
         optionsFfmpeg.add(labelMe);
@@ -262,22 +281,26 @@ public class GUI extends JFrame {
         optionsFfmpeg.setLocation(15, 55);
 
         labelFps.setLocation(10, 30);
-        fps.setLocation(140, 27);
-        labelMiMode.setLocation(200, 30);
-        miMode.setLocation(260, 30);
-        labelMcMode.setLocation(330, 30);
-        mcMode.setLocation(395, 30);
-        labelMeMode.setLocation(480, 30);
+        fps.setLocation(45, 30);
+        labelPreset.setLocation(85, 30);
+        preset.setLocation(130, 30);
+        labelMiMode.setLocation(220, 30);
+        miMode.setLocation(275, 30);
+        labelMcMode.setLocation(345, 30);
+        mcMode.setLocation(405, 30);
+        labelMeMode.setLocation(485, 30);
         meMode.setLocation(545, 30);
-
-        labelVsbmc.setLocation(40, 70);
-        vsbmc.setLocation(95, 70);
-        labelMe.setLocation(205, 70);
-        me.setLocation(235, 70);
-        labelScd.setLocation(305, 70);
-        scd.setLocation(345, 70);
-        labelScd_threshold.setLocation(455, 70);
-        scd_threshold.setLocation(550, 67);
+        
+        labelCrf.setLocation(10, 70);
+        crf.setLocation(45, 70);
+        labelVsbmc.setLocation(85, 70);
+        vsbmc.setLocation(135, 70);
+        labelMe.setLocation(245, 70);
+        me.setLocation(275, 70);
+        labelScd.setLocation(345, 70);
+        scd.setLocation(385, 70);
+        labelScd_threshold.setLocation(495, 70);
+        scd_threshold.setLocation(585, 70);
 
         labelInput.setLocation(30, 180);
         localInput.setLocation(150, 180);
@@ -428,8 +451,9 @@ public class GUI extends JFrame {
                         output = output + ":scd=none";
                     }
                     output = output + ":scd=" + scd.getSelectedItem() + ":scd_threshold=" + scd_threshold.getText();
-                    output = output + "\" -codec:v libx264 -crf 18 -preset slow -threads 1 -c:a copy \"" + dlmOutput.getElementAt(a) + "\" ";
-
+                    output = output + "\" -codec:v libx264  -crf "+crf.getText()+" -preset " + preset.getSelectedItem() + " -threads 1 -c:a copy \"" + dlmOutput.getElementAt(a) + "\" ";
+                   
+                    
                     listacomando[a] = intro + "" + input + "" + output;
                     System.out.println(listacomando[a]);
                 }
