@@ -142,14 +142,15 @@ public class GUI extends JFrame {
         JTextField localInput = new JTextField();
         JTextField localOutput = new JTextField();
         JTextField localFfmpeg = new JTextField();
-        JButton searchInput = new JButton("Selecionar Arquivo");
         JButton searchFfmpeg = new JButton("Selecionar FFMPEG");
+        JButton saveOptions= new JButton("Salvar Configurações");
+        JButton searchInput = new JButton("Selecionar Arquivo");
         JButton start = new JButton("Iniciar Conversão");
         JButton remove = new JButton("Remover Selecionado");
         JProgressBar pr = new JProgressBar();
 
         //Verifica XML
-        localFfmpeg.setText(xml.SearchXML("FFMPEG"));
+        localFfmpeg.setText(xml.ReadXML("FFMPEG"));
 
         //valores iniciais / configuração de campos
         preset.setSelectedIndex(6);
@@ -170,7 +171,8 @@ public class GUI extends JFrame {
         labelFfmpeg.setSize(120, 20);
         localFfmpeg.setSize(480, 25);
         searchFfmpeg.setSize(150, 30);
-
+        saveOptions.setSize(150, 30);
+        
         labelFps.setSize(130, 20);
         fps.setSize(30, 20);
         labelPreset.setSize(130, 20);
@@ -220,7 +222,7 @@ public class GUI extends JFrame {
         JComponent[] optionsComponents = {labelInput, labelInput, labelOutput, labelFfmpeg, labelFps, labelPreset, labelMiMode, labelMcMode,
             labelMeMode, labelCrf, labelVsbmc, labelMe, labelScd, labelScd_threshold, fps, crf, scd_threshold, preset, miMode, mcMode, meMode, vsbmc, scd, me};
 
-        JComponent[] panelComponents = {labelFfmpeg, localFfmpeg, searchFfmpeg, optionsFfmpeg, labelInput, localInput, searchInput, labelOutput,
+        JComponent[] panelComponents = {labelFfmpeg, localFfmpeg,saveOptions, searchFfmpeg, optionsFfmpeg, labelInput, localInput, searchInput, labelOutput,
             localOutput, pr, start, status, inputScroll, remove, outputScroll};
         
         //adição automatica opções ffmpeg
@@ -235,7 +237,8 @@ public class GUI extends JFrame {
         labelFfmpeg.setLocation(30, 20);
         localFfmpeg.setLocation(150, 20);
         searchFfmpeg.setLocation(670, 17);
-
+        saveOptions.setLocation(670, 97);
+        
         optionsFfmpeg.setLocation(15, 55);
 
         labelFps.setLocation(10, 30);
@@ -311,6 +314,30 @@ public class GUI extends JFrame {
         });
 
         //Ações dos Botões
+        searchFfmpeg.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                JFileChooser fc = new JFileChooser();
+                fc.setSize(500, 500);
+
+                fc.setFileFilter(new FileNameExtensionFilter("Executaveis (*.exe)", "exe"));
+                fc.showOpenDialog(frame);
+
+                if (fc.getSelectedFile() != null) {
+                    localFfmpeg.setText(fc.getSelectedFile().getAbsolutePath());
+                    xml.WriteXml("ffmpeg", fc.getSelectedFile().getAbsolutePath());
+                }
+            }
+        });
+        
+        saveOptions.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+            }
+        });
+        
         searchInput.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -341,23 +368,6 @@ public class GUI extends JFrame {
             }
         }
         );
-
-        searchFfmpeg.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                JFileChooser fc = new JFileChooser();
-                fc.setSize(500, 500);
-
-                fc.setFileFilter(new FileNameExtensionFilter("Executaveis (*.exe)", "exe"));
-                fc.showOpenDialog(frame);
-
-                if (fc.getSelectedFile() != null) {
-                    localFfmpeg.setText(fc.getSelectedFile().getAbsolutePath());
-                    xml.WriteXml("FFMPEG", fc.getSelectedFile().getAbsolutePath());
-                }
-            }
-        });
 
         status.addPropertyChangeListener(new PropertyChangeListener() {
             @Override

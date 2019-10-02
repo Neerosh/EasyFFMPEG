@@ -18,6 +18,55 @@ import javax.swing.JOptionPane;
  * @author Nerrosh
  */
 public class XML {
+    
+    String preset,miMode,mcMode,meMode,vsbmc,me,scd,ffmpeg;
+    int fps,crf;
+    float scdThreshold;
+
+    public XML(int fps,int crf,String preset,String miMode,String mcMode,String meMode,String vsbmc,String me,String scd, float scdThreshold) {
+        this.fps=fps;
+        this.crf=crf;
+        this.preset=preset;
+        this.miMode=miMode;
+        this.mcMode=mcMode;
+        this.meMode=meMode;
+        this.vsbmc=vsbmc;
+        this.me=me;
+        this.scd=scd;
+        this.scdThreshold=scdThreshold;
+    }
+
+    public XML() {
+    }
+
+    protected void WriteAll(){
+        WriteXml("fps",String.valueOf(fps));
+        WriteXml("crf",String.valueOf(crf));
+        WriteXml("preset", preset);
+        WriteXml("miMode", miMode);
+        WriteXml("mcMode", mcMode);
+        WriteXml("meMode", meMode);
+        WriteXml("vsbmc", vsbmc);
+        WriteXml("me", me);
+        WriteXml("scd", scd);
+        WriteXml("scdThreshold",String.valueOf(scdThreshold));
+    }
+    
+    protected XML ReadAll(){
+        fps=Integer.valueOf(ReadXML("fps"));
+        crf=Integer.valueOf(ReadXML("crf"));
+        preset=ReadXML("preset");
+        miMode=ReadXML("miMode");
+        mcMode=ReadXML("mcMode");
+        meMode=ReadXML("meMode");
+        vsbmc=ReadXML("vsbmc");
+        me=ReadXML("me");
+        scd=ReadXML("scd");
+        scdThreshold=Float.valueOf(ReadXML("scdThreshold"));
+        return this;
+    }
+    
+    
 
     protected void WriteXml(String Name, String Value) {
         try {
@@ -32,8 +81,9 @@ public class XML {
             System.out.println(e);
         }
     }
-
-    protected String SearchXML(String Name) {
+    
+    
+    protected String ReadXML(String Name) {
         try {
             File file = new File("properties.xml");
             FileInputStream fileInput = new FileInputStream(file);
@@ -59,4 +109,8 @@ public class XML {
         }
         return "";
     }
+    
+    
+    
+    
 }
