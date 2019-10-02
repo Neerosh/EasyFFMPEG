@@ -6,12 +6,15 @@
 package ffmpeg.ui;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.net.URI;
 import java.text.NumberFormat;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -53,6 +56,7 @@ public class GUI extends JFrame {
         initComponents();
     }
 
+    
     private void initComponents() {
         //Utiliza os componentes com o tema do sistema
         try {
@@ -74,21 +78,9 @@ public class GUI extends JFrame {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Erro ao aplicar tema do sistema, ou alterar as opções de interface\n" + e, "Erro UIManager", JOptionPane.ERROR_MESSAGE);
         }
-        //Declaração de variaveis
-        DefaultListModel dlmInput = new DefaultListModel();
-        DefaultListModel dlmOutput = new DefaultListModel();
-        JFrame frame = new JFrame();
-        JPanel panel = new JPanel();
-        JList inputList = new JList(dlmInput);
-        JScrollPane inputScroll = new JScrollPane(inputList, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        JScrollPane outputScroll = new JScrollPane(output, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        JPanel optionsFfmpeg = new JPanel();
+        
 
-        //Borda
-        inputScroll.setBorder(BorderFactory.createTitledBorder(null, "Arquivos Selecionados :", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Helvetica", Font.PLAIN, 12)));
-        outputScroll.setBorder(BorderFactory.createTitledBorder(null, "Texto de Saida (CMD) :", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Helvetica", Font.PLAIN, 12)));
-        optionsFfmpeg.setBorder(BorderFactory.createTitledBorder(null, "Opções FFMPEG :", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Helvetica", Font.PLAIN, 12)));
-
+        
         //propriedades label status
         status.setHorizontalAlignment(JLabel.CENTER);
         status.setVerticalAlignment(JLabel.CENTER);
@@ -104,6 +96,9 @@ public class GUI extends JFrame {
         nfInteger.setGroupingUsed(false);
         NumberFormat nf2 = NumberFormat.getNumberInstance();
 
+        //Declaração de variaveis
+        DefaultListModel dlmInput = new DefaultListModel();
+        DefaultListModel dlmOutput = new DefaultListModel();
         //Valores comboBox
         String[] presetList = {"ultrafast", "superfast", "veryfast", "faster", "fast", "medium", "slow", "slower", "veryslow"};
         String[] miModeList = {"mci", "blend", "dub"};
@@ -113,11 +108,21 @@ public class GUI extends JFrame {
         String[] meList = {"esa", "tss", "tlds", "ntss", "fss", "ds", "hexbs", "epzs", "umh"};
         String[] scdList = {"Desabilitado", "fdiff"};
 
-        //Declaração de componentes
+        //Componentes
+        JFrame frame = new JFrame();
+        JPanel panel = new JPanel();
+        JPanel optionsFfmpeg = new JPanel();
         JLabel labelInput = new JLabel("Arquivo de Entrada :");
         JLabel labelOutput = new JLabel("Arquivo de Saida :");
         JLabel labelFfmpeg = new JLabel("Pasta do FFMPEG :");
-         //Componentes OpçõesFFMPEG
+        //Componentes OptionsFfmpeg
+        JTextField localInput = new JTextField();
+        JTextField localOutput = new JTextField();
+        JTextField localFfmpeg = new JTextField();
+        JButton searchFfmpeg = new JButton("Selecionar FFMPEG");
+        JButton saveOptions = new JButton("Salvar Configurações");
+        JButton defaultOptions = new JButton("Resetar Configurações");
+        JButton infoOptions= new JButton("Ajuda");
         JLabel labelFps = new JLabel("FPS :");
         JLabel labelPreset = new JLabel("Preset :");
         JLabel labelMiMode = new JLabel("MI Mode :");
@@ -127,10 +132,10 @@ public class GUI extends JFrame {
         JLabel labelVsbmc = new JLabel("VSBMC :");
         JLabel labelMe = new JLabel("ME :");
         JLabel labelScd = new JLabel("SCD :");
-        JLabel labelScd_threshold = new JLabel("SCD threshold :");
+        JLabel labelScdThreshold = new JLabel("SCD threshold :");
         JFormattedTextField fps = new JFormattedTextField(nfInteger);
         JFormattedTextField crf = new JFormattedTextField(nfInteger);
-        JFormattedTextField scd_threshold = new JFormattedTextField(nf2);
+        JFormattedTextField scdThreshold = new JFormattedTextField(nf2);
         JComboBox preset = new JComboBox(presetList);
         JComboBox miMode = new JComboBox(miModeList);
         JComboBox mcMode = new JComboBox(mcModeList);
@@ -138,41 +143,45 @@ public class GUI extends JFrame {
         JComboBox vsbmc = new JComboBox(vsbmcList);
         JComboBox scd = new JComboBox(scdList);
         JComboBox me = new JComboBox(meList);
-        
-        JTextField localInput = new JTextField();
-        JTextField localOutput = new JTextField();
-        JTextField localFfmpeg = new JTextField();
-        JButton searchFfmpeg = new JButton("Selecionar FFMPEG");
-        JButton saveOptions= new JButton("Salvar Configurações");
+        //Componentes panel
         JButton searchInput = new JButton("Selecionar Arquivo");
         JButton start = new JButton("Iniciar Conversão");
         JButton remove = new JButton("Remover Selecionado");
         JProgressBar pr = new JProgressBar();
-
-        //Verifica XML
-        localFfmpeg.setText(xml.ReadXML("FFMPEG"));
-
-        //valores iniciais / configuração de campos
-        preset.setSelectedIndex(6);
-        miMode.setSelectedIndex(0);
-        mcMode.setSelectedIndex(1);
-        meMode.setSelectedIndex(0);
-        vsbmc.setSelectedIndex(0);
-        me.setSelectedIndex(7);
-        fps.setText("60");
-        crf.setText("18");
-        scd.setSelectedIndex(1);
-        scd_threshold.setText("5.0");
-
+        JList inputList = new JList(dlmInput);
+        JScrollPane inputScroll = new JScrollPane(inputList, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        JScrollPane outputScroll = new JScrollPane(output, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        
+        //Verifica XML e adicona valores ao programa
+        xml.ReadAll();
+        localFfmpeg.setText(xml.getFfmpeg());
+        fps.setText(xml.getFps());
+        preset.setSelectedItem(xml.getPreset());
+        miMode.setSelectedItem(xml.getMiMode());
+        mcMode.setSelectedItem(xml.getMcMode());
+        meMode.setSelectedItem(xml.getMeMode());
+        crf.setText(xml.getCrf());
+        vsbmc.setSelectedItem(xml.getVsbmc());
+        me.setSelectedItem(xml.getMe());
+        scd.setSelectedItem(xml.getScd());
+        scdThreshold.setText(xml.getScdThreshold());
+        
+        //Borda
+        inputScroll.setBorder(BorderFactory.createTitledBorder(null, "Arquivos Selecionados :", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Helvetica", Font.PLAIN, 12)));
+        outputScroll.setBorder(BorderFactory.createTitledBorder(null, "Texto de Saida (CMD) :", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Helvetica", Font.PLAIN, 12)));
+        optionsFfmpeg.setBorder(BorderFactory.createTitledBorder(null, "Opções FFMPEG :", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Helvetica", Font.PLAIN, 12)));
         //Tamanhos diferentes de fontes
         status.setFont(new Font("Helvetica", Font.BOLD, 14));
 
-        //Tamanhos frame
+        //Tamanhos componentes
+        //Componentes OptionsFfmpeg
+        optionsFfmpeg.setSize(815, 165);
         labelFfmpeg.setSize(120, 20);
         localFfmpeg.setSize(480, 25);
         searchFfmpeg.setSize(150, 30);
         saveOptions.setSize(150, 30);
-        
+        defaultOptions.setSize(160, 30);
+        infoOptions.setSize(80, 30);
         labelFps.setSize(130, 20);
         fps.setSize(30, 20);
         labelPreset.setSize(130, 20);
@@ -191,26 +200,21 @@ public class GUI extends JFrame {
         me.setSize(60, 20);
         labelScd.setSize(60, 20);
         scd.setSize(100, 20);
-        labelScd_threshold.setSize(90, 20);
-        scd_threshold.setSize(30, 20);
-
+        labelScdThreshold.setSize(90, 20);
+        scdThreshold.setSize(30, 20);
+        //Componentes panel
+        panel.setSize(850, 650);
         labelInput.setSize(120, 20);
         localInput.setSize(480, 25);
         searchInput.setSize(150, 30);
-
         labelOutput.setSize(120, 20);
         localOutput.setSize(480, 25);
-
         pr.setSize(600, 30);
         start.setSize(150, 30);
         status.setSize(150, 30);
-
         inputScroll.setSize(600, 140);
         remove.setSize(160, 30);
         outputScroll.setSize(790, 150);
-
-        panel.setSize(850, 650);
-        optionsFfmpeg.setSize(630, 110);
 
         //Opções Painel/componenetes
         panel.setLayout(null);
@@ -219,13 +223,14 @@ public class GUI extends JFrame {
         outputScroll.getViewport().add(output);
 
         //Conjunto de componenetes
-        JComponent[] optionsComponents = {labelInput, labelInput, labelOutput, labelFfmpeg, labelFps, labelPreset, labelMiMode, labelMcMode,
-            labelMeMode, labelCrf, labelVsbmc, labelMe, labelScd, labelScd_threshold, fps, crf, scd_threshold, preset, miMode, mcMode, meMode, vsbmc, scd, me};
-
-        JComponent[] panelComponents = {labelFfmpeg, localFfmpeg,saveOptions, searchFfmpeg, optionsFfmpeg, labelInput, localInput, searchInput, labelOutput,
+        JComponent[] optionsComponents = {labelFfmpeg, localFfmpeg, saveOptions, defaultOptions, searchFfmpeg, infoOptions, 
+            labelInput, labelOutput, labelFfmpeg, labelFps, labelPreset, labelMiMode, labelMcMode,labelMeMode,
+            labelCrf, labelVsbmc, labelMe, labelScd, labelScdThreshold, fps, crf, scdThreshold, preset, miMode,
+            mcMode, meMode, vsbmc, scd, me};
+        JComponent[] panelComponents = {optionsFfmpeg, labelInput, localInput, searchInput, labelOutput,
             localOutput, pr, start, status, inputScroll, remove, outputScroll};
-        
-        //adição automatica opções ffmpeg
+
+        //adição automatica de componentes
         for (int o = 0; o < optionsComponents.length; o++) {
             optionsFfmpeg.add(optionsComponents[o]);
         }
@@ -233,56 +238,51 @@ public class GUI extends JFrame {
             panel.add(panelComponents[o]);
         }
 
-        //Local no painel (ordem cima para baixo)
-        labelFfmpeg.setLocation(30, 20);
-        localFfmpeg.setLocation(150, 20);
-        searchFfmpeg.setLocation(670, 17);
-        saveOptions.setLocation(670, 97);
-        
-        optionsFfmpeg.setLocation(15, 55);
-
-        labelFps.setLocation(10, 30);
-        fps.setLocation(45, 30);
-        labelPreset.setLocation(85, 30);
-        preset.setLocation(130, 30);
-        labelMiMode.setLocation(220, 30);
-        miMode.setLocation(275, 30);
-        labelMcMode.setLocation(345, 30);
-        mcMode.setLocation(405, 30);
-        labelMeMode.setLocation(485, 30);
-        meMode.setLocation(545, 30);
-
-        labelCrf.setLocation(10, 70);
-        crf.setLocation(45, 70);
-        labelVsbmc.setLocation(85, 70);
-        vsbmc.setLocation(135, 70);
-        labelMe.setLocation(245, 70);
-        me.setLocation(275, 70);
-        labelScd.setLocation(345, 70);
-        scd.setLocation(385, 70);
-        labelScd_threshold.setLocation(495, 70);
-        scd_threshold.setLocation(585, 70);
-
+        //Local no painel
+        //Componentes OptionsFfmpeg
+        optionsFfmpeg.setLocation(10, 5);
+        labelFfmpeg.setLocation(10, 20);
+        localFfmpeg.setLocation(130, 20);
+        searchFfmpeg.setLocation(650, 17);
+        labelFps.setLocation(10, 60);
+        fps.setLocation(45, 60);
+        labelPreset.setLocation(85, 60);
+        preset.setLocation(130, 60);
+        labelMiMode.setLocation(220, 60);
+        miMode.setLocation(275, 60);
+        labelMcMode.setLocation(345, 60);
+        mcMode.setLocation(405, 60);
+        labelMeMode.setLocation(485, 60);
+        meMode.setLocation(545, 60);
+        saveOptions.setLocation(650, 57);
+        defaultOptions.setLocation(645, 125);
+        infoOptions.setLocation(10, 125);
+        labelCrf.setLocation(10, 100);
+        crf.setLocation(45, 100);
+        labelVsbmc.setLocation(85, 100);
+        vsbmc.setLocation(135, 100);
+        labelMe.setLocation(245, 100);
+        me.setLocation(275, 100);
+        labelScd.setLocation(345, 100);
+        scd.setLocation(385, 100);
+        labelScdThreshold.setLocation(495, 100);
+        scdThreshold.setLocation(585, 100);
+        //Componentes panel
         labelInput.setLocation(30, 180);
         localInput.setLocation(150, 180);
-        searchInput.setLocation(670, 177);
-
+        searchInput.setLocation(660, 195);
         labelOutput.setLocation(30, 220);
         localOutput.setLocation(150, 220);
-
         pr.setLocation(30, 255);
-        start.setLocation(670, 253);
-        status.setLocation(670, 280);
-
+        start.setLocation(660, 253);
+        status.setLocation(660, 280);
         inputList.setLocation(1, 1);
         inputScroll.setLocation(30, 290);
-        remove.setLocation(665, 390);
-
+        remove.setLocation(660, 390);
         outputScroll.setLocation(30, 440);
 
-        frame.add(panel);
-
         //Opções do Frame
+        frame.add(panel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setSize(850, 650);
@@ -290,7 +290,8 @@ public class GUI extends JFrame {
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-
+        
+        //Ações Compoenentes
         miMode.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -306,13 +307,12 @@ public class GUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (scd.getSelectedItem().toString().equals("fdiff")) {
-                    scd_threshold.setEnabled(true);
+                    scdThreshold.setEnabled(true);
                 } else {
-                    scd_threshold.setEnabled(false);
+                    scdThreshold.setEnabled(false);
                 }
             }
         });
-
         //Ações dos Botões
         searchFfmpeg.addActionListener(new ActionListener() {
             @Override
@@ -326,18 +326,59 @@ public class GUI extends JFrame {
 
                 if (fc.getSelectedFile() != null) {
                     localFfmpeg.setText(fc.getSelectedFile().getAbsolutePath());
-                    xml.WriteXml("ffmpeg", fc.getSelectedFile().getAbsolutePath());
+
                 }
             }
         });
+
+        defaultOptions.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //confirmação
+                int confirm = JOptionPane.showConfirmDialog(rootPane, "Restaurar Configuração Padrão?\nA configuração só sera salva caso seja utilizado o botão 'Salvar Configurações'.",
+                        "Restaurar Configuração Padrão?", JOptionPane.YES_NO_OPTION);
+                if (confirm == 0) {
+                    //valores iniciais (Default) / configuração de campos
+                    preset.setSelectedIndex(6);
+                    miMode.setSelectedIndex(0);
+                    mcMode.setSelectedIndex(1);
+                    meMode.setSelectedIndex(0);
+                    vsbmc.setSelectedIndex(0);
+                    me.setSelectedIndex(7);
+                    fps.setText("60");
+                    crf.setText("18");
+                    scd.setSelectedIndex(1);
+                    scdThreshold.setText("5.0");
+                }
+
+            }
+
+        });
         
+        infoOptions.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                    try {
+                        Desktop.getDesktop().browse(URI.create("http://ffmpeg.org/ffmpeg-filters.html#minterpolate"));
+                    } catch (IOException ex) {
+                        System.out.println(ex);
+                    }
+                }
+            }
+        });
+
         saveOptions.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                
+                xml = new XML(fps.getText(), crf.getText(), localFfmpeg.getText(),
+                        preset.getSelectedItem().toString(), miMode.getSelectedItem().toString(), mcMode.getSelectedItem().toString(),
+                        meMode.getSelectedItem().toString(), vsbmc.getSelectedItem().toString(), me.getSelectedItem().toString(),
+                        scd.getSelectedItem().toString(), scdThreshold.getText());
+                xml.WriteAll();
             }
         });
-        
+
         searchInput.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -387,6 +428,8 @@ public class GUI extends JFrame {
         start.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
+                //adicionar trava para não iniciar o programa caso as opções do ffmpeg estejam em banco
+
                 String[] listacomando = new String[dlmInput.getSize()];
                 status.setText("Em Andamento");
                 status.setForeground(Color.RED);
@@ -418,7 +461,7 @@ public class GUI extends JFrame {
                     if (scd.getSelectedItem().toString().equals("Desabilitado")) {
                         output = output + ":scd=none";
                     }
-                    output = output + ":scd=" + scd.getSelectedItem() + ":scd_threshold=" + scd_threshold.getText();
+                    output = output + ":scd=" + scd.getSelectedItem() + ":scd_threshold=" + scdThreshold.getText();
                     output = output + "\" -codec:v libx264  -crf " + crf.getText() + " -preset " + preset.getSelectedItem() + " -threads 1 -c:a copy \"" + dlmOutput.getElementAt(a) + "\" ";
 
                     listacomando[a] = intro + "" + input + "" + output;
