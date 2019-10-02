@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Configurações</comment>
+<entry key="FFMPEG">D:\H-Archive\Video2x\dependencies\ffmpeg-latest-win64-static\bin\ffmpeg.exe</entry>
+</properties>

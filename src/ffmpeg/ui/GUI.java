@@ -17,6 +17,7 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -59,6 +60,17 @@ public class GUI extends JFrame {
             UIManager.put("OptionPane.titleFont", new Font("Helvetica", Font.PLAIN, 12));
             UIManager.put("OptionPane.messageFont", new Font("Helvetica", Font.PLAIN, 14));
             UIManager.put("OptionPane.buttonFont", new Font("Helvetica", Font.PLAIN, 14));
+
+            //Muda a fonte de tudo 
+            java.util.Enumeration keys = UIManager.getLookAndFeelDefaults().keys();
+            while (keys.hasMoreElements()) {
+                Object key = keys.nextElement();
+                Object value = UIManager.get(key);
+                if (value instanceof javax.swing.plaf.FontUIResource) {
+                    UIManager.put(key, new Font("Helvetica", Font.PLAIN, 12));
+                }
+            }
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Erro ao aplicar tema do sistema, ou alterar as opções de interface\n" + e, "Erro UIManager", JOptionPane.ERROR_MESSAGE);
         }
@@ -81,18 +93,18 @@ public class GUI extends JFrame {
         status.setHorizontalAlignment(JLabel.CENTER);
         status.setVerticalAlignment(JLabel.CENTER);
         status.setForeground(Color.BLUE);
+        status.setBackground(Color.GREEN);
 
         //auto scroll (puxa para o texto mais recente)
         DefaultCaret caret = (DefaultCaret) output.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
-        //format
+        //formatos para campos Formatados
         NumberFormat nfInteger = NumberFormat.getIntegerInstance();
         nfInteger.setGroupingUsed(false);
-
         NumberFormat nf2 = NumberFormat.getNumberInstance();
-        //nf2.setGroupingUsed(false);
-        //Valores
+
+        //Valores comboBox
         String[] presetList = {"ultrafast", "superfast", "veryfast", "faster", "fast", "medium", "slow", "slower", "veryslow"};
         String[] miModeList = {"mci", "blend", "dub"};
         String[] mcModeList = {"obmc", "aobmc"};
@@ -101,9 +113,11 @@ public class GUI extends JFrame {
         String[] meList = {"esa", "tss", "tlds", "ntss", "fss", "ds", "hexbs", "epzs", "umh"};
         String[] scdList = {"Desabilitado", "fdiff"};
 
+        //Declaração de componentes
         JLabel labelInput = new JLabel("Arquivo de Entrada :");
         JLabel labelOutput = new JLabel("Arquivo de Saida :");
         JLabel labelFfmpeg = new JLabel("Pasta do FFMPEG :");
+         //Componentes OpçõesFFMPEG
         JLabel labelFps = new JLabel("FPS :");
         JLabel labelPreset = new JLabel("Preset :");
         JLabel labelMiMode = new JLabel("MI Mode :");
@@ -124,7 +138,7 @@ public class GUI extends JFrame {
         JComboBox vsbmc = new JComboBox(vsbmcList);
         JComboBox scd = new JComboBox(scdList);
         JComboBox me = new JComboBox(meList);
-
+        
         JTextField localInput = new JTextField();
         JTextField localOutput = new JTextField();
         JTextField localFfmpeg = new JTextField();
@@ -149,41 +163,8 @@ public class GUI extends JFrame {
         scd.setSelectedIndex(1);
         scd_threshold.setText("5.0");
 
-        //Tamanhos fontes
-        labelInput.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        labelOutput.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        labelFfmpeg.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        labelFps.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        labelPreset.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        labelMiMode.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        labelMcMode.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        labelMeMode.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        labelCrf.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        labelVsbmc.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        labelMe.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        labelScd.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        labelScd_threshold.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        preset.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        fps.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        scd_threshold.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        miMode.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        mcMode.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        meMode.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        crf.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        vsbmc.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        me.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        scd.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        localInput.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        localOutput.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        localFfmpeg.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        inputList.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        output.setFont(new Font("Helvetica", Font.PLAIN, 12));
+        //Tamanhos diferentes de fontes
         status.setFont(new Font("Helvetica", Font.BOLD, 14));
-        searchInput.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        searchFfmpeg.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        start.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        remove.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        pr.setFont(new Font("Helvetica", Font.PLAIN, 12));
 
         //Tamanhos frame
         labelFfmpeg.setSize(120, 20);
@@ -228,50 +209,27 @@ public class GUI extends JFrame {
 
         panel.setSize(850, 650);
         optionsFfmpeg.setSize(630, 110);
-        //Opções Painel
+
+        //Opções Painel/componenetes
         panel.setLayout(null);
         optionsFfmpeg.setLayout(null);
-
-        //Adição ao Painel
         inputScroll.getViewport().add(inputList);
         outputScroll.getViewport().add(output);
-        optionsFfmpeg.add(labelFps);
-        optionsFfmpeg.add(fps);
-        optionsFfmpeg.add(labelPreset);
-        optionsFfmpeg.add(preset);
-        optionsFfmpeg.add(labelMiMode);
-        optionsFfmpeg.add(miMode);
-        optionsFfmpeg.add(labelMcMode);
-        optionsFfmpeg.add(mcMode);
-        optionsFfmpeg.add(labelMeMode);
-        optionsFfmpeg.add(meMode);
-        optionsFfmpeg.add(labelCrf);
-        optionsFfmpeg.add(crf);
-        optionsFfmpeg.add(labelVsbmc);
-        optionsFfmpeg.add(vsbmc);
-        optionsFfmpeg.add(labelMe);
-        optionsFfmpeg.add(me);
-        optionsFfmpeg.add(labelScd);
-        optionsFfmpeg.add(scd);
-        optionsFfmpeg.add(labelScd_threshold);
-        optionsFfmpeg.add(scd_threshold);
 
-        panel.add(labelFfmpeg);
-        panel.add(localFfmpeg);
-        panel.add(searchFfmpeg);
-        panel.add(optionsFfmpeg);
+        //Conjunto de componenetes
+        JComponent[] optionsComponents = {labelInput, labelInput, labelOutput, labelFfmpeg, labelFps, labelPreset, labelMiMode, labelMcMode,
+            labelMeMode, labelCrf, labelVsbmc, labelMe, labelScd, labelScd_threshold, fps, crf, scd_threshold, preset, miMode, mcMode, meMode, vsbmc, scd, me};
 
-        panel.add(labelInput);
-        panel.add(localInput);
-        panel.add(searchInput);
-        panel.add(labelOutput);
-        panel.add(localOutput);
-        panel.add(pr);
-        panel.add(start);
-        panel.add(status);
-        panel.add(inputScroll);
-        panel.add(remove);
-        panel.add(outputScroll);
+        JComponent[] panelComponents = {labelFfmpeg, localFfmpeg, searchFfmpeg, optionsFfmpeg, labelInput, localInput, searchInput, labelOutput,
+            localOutput, pr, start, status, inputScroll, remove, outputScroll};
+        
+        //adição automatica opções ffmpeg
+        for (int o = 0; o < optionsComponents.length; o++) {
+            optionsFfmpeg.add(optionsComponents[o]);
+        }
+        for (int o = 0; o < panelComponents.length; o++) {
+            panel.add(panelComponents[o]);
+        }
 
         //Local no painel (ordem cima para baixo)
         labelFfmpeg.setLocation(30, 20);
@@ -290,7 +248,7 @@ public class GUI extends JFrame {
         mcMode.setLocation(405, 30);
         labelMeMode.setLocation(485, 30);
         meMode.setLocation(545, 30);
-        
+
         labelCrf.setLocation(10, 70);
         crf.setLocation(45, 70);
         labelVsbmc.setLocation(85, 70);
@@ -451,9 +409,8 @@ public class GUI extends JFrame {
                         output = output + ":scd=none";
                     }
                     output = output + ":scd=" + scd.getSelectedItem() + ":scd_threshold=" + scd_threshold.getText();
-                    output = output + "\" -codec:v libx264  -crf "+crf.getText()+" -preset " + preset.getSelectedItem() + " -threads 1 -c:a copy \"" + dlmOutput.getElementAt(a) + "\" ";
-                   
-                    
+                    output = output + "\" -codec:v libx264  -crf " + crf.getText() + " -preset " + preset.getSelectedItem() + " -threads 1 -c:a copy \"" + dlmOutput.getElementAt(a) + "\" ";
+
                     listacomando[a] = intro + "" + input + "" + output;
                     System.out.println(listacomando[a]);
                 }
