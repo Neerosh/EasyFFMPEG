@@ -127,21 +127,6 @@ public class XML {
         this.scdThreshold = scdThreshold;
     }
 
-    public Properties getProperties() {
-        return properties;
-    }
-
-    public void setProperties(Properties properties) {
-        this.properties = properties;
-    }
-
-    public File getFile() {
-        return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
-    }
 
     protected void WriteAll() {
         properties.setProperty("fps", fps);
@@ -161,9 +146,7 @@ public class XML {
     }
     
     
-    protected void ReadAll() {
-        
-        if(file.exists()){
+    protected void ReadAll() {   
         fps = ReadXML("fps");
         crf = ReadXML("crf");
         ffmpeg = ReadXML("ffmpeg");
@@ -175,9 +158,7 @@ public class XML {
         me = ReadXML("me");
         scd = ReadXML("scd");
         scdThreshold = ReadXML("scdThreshold");
-        }else{
-            System.out.println("Arquivo de configuração não existe ainda");
-        }
+
     }
 
     protected void StoreXml() {
