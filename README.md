@@ -10,7 +10,7 @@ Necessário:
 No momento é possivel:
 - Adicionar vários videos (com a seleção multipla de arquivos)
 - Remover um ou mais elementos da lista de videos selecionados
-- Alterar opções do filtro de video (mi_mode me_mode mc_mode)
+- Alterar opções do filtro de video
 - Definir o FPS desejado
 
 Imagem v0.0.2
