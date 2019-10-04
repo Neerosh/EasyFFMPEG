@@ -13,6 +13,6 @@ No momento é possivel:
 - Alterar opções do filtro de video
 - Definir o FPS desejado
 
-Imagem v0.0.2
+Imagem v1.0
 ![screenshot](https://github.com/Neerosh/EasyFFMPEG/blob/main/Untitled.png)
 
