@@ -14,5 +14,5 @@ No momento é possivel:
 - Definir o FPS desejado
 
 Imagem v1.0
-![screenshot](https://github.com/Neerosh/EasyFFMPEG/blob/main/Untitled.png)
+![screenshot](https://github.com/Neerosh/EasyFFMPEG/blob/main/1.0.png)
 
