@@ -1,6 +1,6 @@
-# Easy FFMPEG 60FPS
+# Easy FFMPEG
 
-<p>Projeto: interface de facil uso para converter videos suportados.</p>
+<p>Projeto: interface de facil uso para aplicar o filtro minterpolate gerando um arquivo de saida com as configurações escolhidas pelo usuario.</p>
 <p>Aprendendo e testando funcionalidades do github.</p>
 
 Necessário:
