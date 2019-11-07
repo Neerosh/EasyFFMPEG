@@ -1,6 +1,6 @@
-# Easy FFMPEG 60FPS
+# Easy FFMPEG
 
-<p>Projeto: interface de facil uso para converter videos suportados.</p>
+<p>Projeto: interface de facil uso para aplicar o filtro minterpolate gerando um arquivo de saida com as configurações escolhidas pelo usuario.</p>
 <p>Aprendendo e testando funcionalidades do github.</p>
 
 Necessário:
@@ -10,9 +10,9 @@ Necessário:
 No momento é possivel:
 - Adicionar vários videos (com a seleção multipla de arquivos)
 - Remover um ou mais elementos da lista de videos selecionados
-- Alterar opções do filtro de video (mi_mode me_mode mc_mode)
+- Alterar opções do filtro de video
 - Definir o FPS desejado
 
-Imagem v0.0.2
-![screenshot](https://github.com/Neerosh/EasyFFMPEG/blob/main/Untitled.png)
+Imagem v1.0
+![screenshot](https://github.com/Neerosh/EasyFFMPEG/blob/main/1.0.png)
 
