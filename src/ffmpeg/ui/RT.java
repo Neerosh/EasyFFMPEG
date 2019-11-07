@@ -10,7 +10,7 @@ package ffmpeg.ui;
  * @author Nerrosh
  */
 import java.io.*;
-
+//runtime thread
 class RT extends Thread {
 
     InputStream is;

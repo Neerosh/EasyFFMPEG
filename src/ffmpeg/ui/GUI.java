@@ -115,7 +115,7 @@ public class GUI extends JFrame {
         optionsFfmpeg = new JPanel();
         labelInput = new JLabel("Arquivo de Entrada :");
         labelOutput = new JLabel("Arquivo de Saida :");
-        labelFfmpeg = new JLabel("Pasta do FFMPEG :");
+        labelFfmpeg = new JLabel("Caminho FFMPEG.exe :");
         //Componentes OptionsFfmpeg
         localInput = new JTextField();
         localOutput = new JTextField();
@@ -190,7 +190,7 @@ public class GUI extends JFrame {
         //Tamanhos componentes
         //Componentes OptionsFfmpeg
         optionsFfmpeg.setSize(815, 165);
-        labelFfmpeg.setSize(120, 20);
+        labelFfmpeg.setSize(140, 20);
         localFfmpeg.setSize(480, 25);
         searchFfmpeg.setSize(150, 30);
         saveOptions.setSize(150, 30);
@@ -256,7 +256,7 @@ public class GUI extends JFrame {
         //Componentes OptionsFfmpeg
         optionsFfmpeg.setLocation(10, 5);
         labelFfmpeg.setLocation(10, 20);
-        localFfmpeg.setLocation(130, 20);
+        localFfmpeg.setLocation(150, 20);
         searchFfmpeg.setLocation(650, 17);
         labelFps.setLocation(10, 60);
         fps.setLocation(45, 60);
@@ -383,6 +383,9 @@ public class GUI extends JFrame {
                         meMode.getSelectedItem().toString(), vsbmc.getSelectedItem().toString(), me.getSelectedItem().toString(),
                         scd.getSelectedItem().toString(), scdThreshold.getText());
                 xml.WriteAll();
+                JOptionPane.showConfirmDialog(rootPane, "Configurações salvas com sucesso.",
+                        "Salvar Configurações", JOptionPane.DEFAULT_OPTION);
+                
             }
         });
 
@@ -422,9 +425,11 @@ public class GUI extends JFrame {
             public void propertyChange(PropertyChangeEvent evt) {
                 if ("text".equals(evt.getPropertyName()) && evt.getNewValue().equals("Concluido")) {
                     searchInput.setEnabled(true);
-                    searchFfmpeg.setEnabled(true);
-                    start.setEnabled(true);
-                    remove.setEnabled(true);
+                searchFfmpeg.setEnabled(true);
+                start.setEnabled(true);
+                remove.setEnabled(true);
+                saveOptions.setEnabled(true);
+                defaultOptions.setEnabled(true);
 
                     ClearLists(dlmInput);
                     ClearLists(dlmOutput);
@@ -469,7 +474,7 @@ public class GUI extends JFrame {
                         output = output + ":scd=none";
                     }
                     output = output + ":scd=" + scd.getSelectedItem() + ":scd_threshold=" + scdThreshold.getText();
-                    output = output + "\" -codec:v libx264  -crf " + crf.getText() + " -preset " + preset.getSelectedItem() + " -threads 1 -c:a copy \"" + dlmOutput.getElementAt(a) + "\" ";
+                    output = output + "\" -codec:v libx264  -crf " + crf.getText() + " -preset " + preset.getSelectedItem() + " -c:a copy \"" + dlmOutput.getElementAt(a) + "\" ";
 
                     listacomando[a] = intro + "" + input + "" + output;
                     System.out.println(listacomando[a]);
@@ -492,10 +497,13 @@ public class GUI extends JFrame {
                 searchFfmpeg.setEnabled(false);
                 start.setEnabled(false);
                 remove.setEnabled(false);
+                saveOptions.setEnabled(false);
+                defaultOptions.setEnabled(false);
 
             }
         }
         );
+        
         remove.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
