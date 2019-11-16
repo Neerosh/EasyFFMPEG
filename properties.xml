@@ -5,7 +5,7 @@
 <entry key="miMode">mci</entry>
 <entry key="scd">fdiff</entry>
 <entry key="scdThreshold">5.0</entry>
-<entry key="crf">23</entry>
+<entry key="crf">17</entry>
 <entry key="fps">60</entry>
 <entry key="me">epzs</entry>
 <entry key="ffmpeg">C:\Users\Nerrosh\Downloads\ffmpeg-20191004-e6625ca-win64-static\bin\ffmpeg.exe</entry>

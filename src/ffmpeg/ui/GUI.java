@@ -69,6 +69,24 @@ public class GUI extends JFrame {
 
     GUI() {
         initComponents();
+        if (xml.file.exists()) {
+            xml.ReadAll();
+            localFfmpeg.setText(xml.getFfmpeg());
+            fps.setText(xml.getFps());
+            preset.setSelectedItem(xml.getPreset());
+            miMode.setSelectedItem(xml.getMiMode());
+            mcMode.setSelectedItem(xml.getMcMode());
+            meMode.setSelectedItem(xml.getMeMode());
+            crf.setText(xml.getCrf());
+            vsbmc.setSelectedItem(xml.getVsbmc());
+            me.setSelectedItem(xml.getMe());
+            scd.setSelectedItem(xml.getScd());
+            scdThreshold.setText(xml.getScdThreshold());
+        } else {
+            JOptionPane.showMessageDialog(this,"Arquivo de configurações não encontrado.\nAs configurações aparecerão no modelo padrão.","Aviso",JOptionPane.WARNING_MESSAGE);
+            setDefaultOptions();
+            saveOptions();
+        }
     }
 
     private void initComponents() {
@@ -155,23 +173,7 @@ public class GUI extends JFrame {
         inputScroll = new JScrollPane(inputList, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         outputScroll = new JScrollPane(output, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-        if (xml.file.exists()) {
-            xml.ReadAll();
-            localFfmpeg.setText(xml.getFfmpeg());
-            fps.setText(xml.getFps());
-            preset.setSelectedItem(xml.getPreset());
-            miMode.setSelectedItem(xml.getMiMode());
-            mcMode.setSelectedItem(xml.getMcMode());
-            meMode.setSelectedItem(xml.getMeMode());
-            crf.setText(xml.getCrf());
-            vsbmc.setSelectedItem(xml.getVsbmc());
-            me.setSelectedItem(xml.getMe());
-            scd.setSelectedItem(xml.getScd());
-            scdThreshold.setText(xml.getScdThreshold());
-        } else {
-            JOptionPane.showMessageDialog(this,"Arquivo de configurações não encontrado.\nAs configurações aparecerão no modelo padrão.","Aviso",JOptionPane.WARNING_MESSAGE);
-            setDefaultOptions();
-        }
+
 
         status.setHorizontalAlignment(JLabel.CENTER);
         status.setVerticalAlignment(JLabel.CENTER);
@@ -378,11 +380,7 @@ public class GUI extends JFrame {
         saveOptions.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                xml = new XML(fps.getText(), crf.getText(), localFfmpeg.getText(),
-                        preset.getSelectedItem().toString(), miMode.getSelectedItem().toString(), mcMode.getSelectedItem().toString(),
-                        meMode.getSelectedItem().toString(), vsbmc.getSelectedItem().toString(), me.getSelectedItem().toString(),
-                        scd.getSelectedItem().toString(), scdThreshold.getText());
-                xml.WriteAll();
+                saveOptions();
                 JOptionPane.showConfirmDialog(rootPane, "Configurações salvas com sucesso.",
                         "Salvar Configurações", JOptionPane.DEFAULT_OPTION);
                 
@@ -518,6 +516,7 @@ public class GUI extends JFrame {
 
     private void setDefaultOptions() {
         //valores iniciais (Default) / configuração de campos
+        localFfmpeg.setText(System.getProperty("user.dir")+"\\ffmpeg\\bin\\ffmpeg.exe");
         preset.setSelectedIndex(6);
         miMode.setSelectedIndex(0);
         mcMode.setSelectedIndex(1);
@@ -528,6 +527,14 @@ public class GUI extends JFrame {
         crf.setText("18");
         scd.setSelectedIndex(1);
         scdThreshold.setText("5.0");
+    }
+    
+    private void saveOptions(){
+    xml = new XML(fps.getText(), crf.getText(), localFfmpeg.getText(),
+                        preset.getSelectedItem().toString(), miMode.getSelectedItem().toString(), mcMode.getSelectedItem().toString(),
+                        meMode.getSelectedItem().toString(), vsbmc.getSelectedItem().toString(), me.getSelectedItem().toString(),
+                        scd.getSelectedItem().toString(), scdThreshold.getText());
+                xml.WriteAll();
     }
 
 }
