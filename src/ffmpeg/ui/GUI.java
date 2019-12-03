@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package ffmpeg.ui;
 
 import java.awt.Color;
@@ -45,6 +41,7 @@ import javax.swing.text.DefaultCaret;
 public class GUI extends JFrame {
 
     XML xml = new XML();
+    FFMPEG ffmpeg;
 
     JFrame frame;
     JPanel panel, optionsFfmpeg;
@@ -56,7 +53,7 @@ public class GUI extends JFrame {
     JFormattedTextField fps, crf, scdThreshold;
     JComboBox preset, miMode, mcMode, meMode, vsbmc, scd, me;
     //Componentes panel
-    JButton searchInput, start, remove;
+    JButton searchInput, start, remove, stop;
     JProgressBar pr;
     static JLabel status;
     JList inputList;
@@ -89,6 +86,8 @@ public class GUI extends JFrame {
         }
     }
 
+    
+    
     private void initComponents() {
         //Utiliza os componentes com o tema do sistema
         try {
@@ -166,6 +165,7 @@ public class GUI extends JFrame {
         searchInput = new JButton("Selecionar Arquivo");
         start = new JButton("Iniciar Conversão");
         remove = new JButton("Remover Selecionado");
+        stop = new JButton("Parar Conversão");
         pr = new JProgressBar();
         status = new JLabel("Não iniciado");
         output = new JTextArea();
@@ -174,7 +174,7 @@ public class GUI extends JFrame {
         outputScroll = new JScrollPane(output, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 
-
+        stop.setEnabled(false);
         status.setHorizontalAlignment(JLabel.CENTER);
         status.setVerticalAlignment(JLabel.CENTER);
         status.setForeground(Color.BLUE);
@@ -230,6 +230,7 @@ public class GUI extends JFrame {
         status.setSize(150, 30);
         inputScroll.setSize(600, 140);
         remove.setSize(160, 30);
+        stop.setSize(150, 30);
         outputScroll.setSize(790, 150);
 
         //Opções Painel/componenetes
@@ -244,7 +245,7 @@ public class GUI extends JFrame {
             labelCrf, labelVsbmc, labelMe, labelScd, labelScdThreshold, fps, crf, scdThreshold, preset, miMode,
             mcMode, meMode, vsbmc, scd, me};
         JComponent[] panelComponents = {optionsFfmpeg, labelInput, localInput, searchInput, labelOutput,
-            localOutput, pr, start, status, inputScroll, remove, outputScroll};
+            localOutput, pr, start, status, inputScroll, remove, stop, outputScroll};
 
         //adição automatica de componentes
         for (int o = 0; o < optionsComponents.length; o++) {
@@ -294,7 +295,8 @@ public class GUI extends JFrame {
         status.setLocation(660, 280);
         inputList.setLocation(1, 1);
         inputScroll.setLocation(30, 290);
-        remove.setLocation(660, 390);
+        remove.setLocation(655, 390);
+        stop.setLocation(660, 330);
         outputScroll.setLocation(30, 440);
 
         //Opções do Frame
@@ -421,13 +423,14 @@ public class GUI extends JFrame {
         status.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                if ("text".equals(evt.getPropertyName()) && evt.getNewValue().equals("Concluido")) {
-                    searchInput.setEnabled(true);
+                if ("text".equals(evt.getPropertyName()) && evt.getNewValue().equals("Concluido") || "text".equals(evt.getPropertyName()) && evt.getNewValue().equals("Processo Cancelado")) {
+                searchInput.setEnabled(true);
                 searchFfmpeg.setEnabled(true);
                 start.setEnabled(true);
                 remove.setEnabled(true);
                 saveOptions.setEnabled(true);
                 defaultOptions.setEnabled(true);
+                stop.setEnabled(false);
 
                     ClearLists(dlmInput);
                     ClearLists(dlmOutput);
@@ -479,7 +482,7 @@ public class GUI extends JFrame {
                 }
                 //execução do comando
 
-                FFMPEG ffmpeg = new FFMPEG(listacomando);
+                ffmpeg = new FFMPEG(listacomando);
                 ffmpeg.addPropertyChangeListener(
                         new PropertyChangeListener() {
                     public void propertyChange(PropertyChangeEvent evt) {
@@ -497,10 +500,25 @@ public class GUI extends JFrame {
                 remove.setEnabled(false);
                 saveOptions.setEnabled(false);
                 defaultOptions.setEnabled(false);
+                stop.setEnabled(true);
 
             }
         }
         );
+        
+        stop.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                 ffmpeg.cancel(true);
+                 pr.setValue(0);
+                 pr.setString("Processo Cancelado");
+                 pr.setStringPainted(true);  
+                 output.setText(java.time.LocalTime.now()+" Operação Cancelada ...........................................");
+                 status.setText("Processo Cancelado");
+                 status.setForeground(Color.ORANGE);
+                 
+            }
+        });
         
         remove.addActionListener(new ActionListener() {
             @Override

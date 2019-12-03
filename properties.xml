@@ -8,7 +8,7 @@
 <entry key="crf">17</entry>
 <entry key="fps">60</entry>
 <entry key="me">epzs</entry>
-<entry key="ffmpeg">C:\Users\Nerrosh\Downloads\ffmpeg-20191004-e6625ca-win64-static\bin\ffmpeg.exe</entry>
+<entry key="ffmpeg">E:\H-Archive\Video2x\dependencies\ffmpeg-latest-win64-static\bin\ffmpeg.exe</entry>
 <entry key="preset">slow</entry>
 <entry key="meMode">bidir</entry>
 <entry key="vsbmc">Habilitado</entry>
